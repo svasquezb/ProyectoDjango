@@ -58,7 +58,7 @@
       <div class="col-md-4 mb-4">
         <div class="card">
           {% if videojuego.foto %}
-            <img src="{{ videojuego.foto.url }}" class="card-img-top" alt="{{ videojuego.nombre }}">
+            <img src="{% static 'img/'|add:videojuego.foto.name %}" class="card-img-top" alt="{{ videojuego.nombre }}">
           {% else %}
             <img src="{% static 'img/default_game.png' %}" class="card-img-top" alt="Imagen por defecto">
           {% endif %}
@@ -72,7 +72,7 @@
                     data-nombre="{{ videojuego.nombre }}" 
                     data-descripcion="{{ videojuego.descripcion }}" 
                     data-precio="{{ videojuego.precio }}"
-                    data-foto="{{ videojuego.foto.url }}">
+                    data-foto="{% static 'img/'|add:videojuego.foto.name %}">
               Ver detalles
             </button>
           </div>

@@ -8,7 +8,7 @@ class Videojuego(models.Model):
     descripcion = models.TextField()
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.IntegerField(null=True, blank=True)
-    foto = models.ImageField(upload_to='videojuegos/', default='default_game.png')
+    foto = models.ImageField(upload_to='img/', default='img/default_game.png')
 
     def save(self, *args, **kwargs):
         if not self.slug:
