@@ -51,13 +51,41 @@
     </div>
   </nav>
 
-
   <div class="container my-5">
-    <h1 class="text-center mb-5">Juegos de septiembre de 2019</h1>
+    <h1 class="text-center mb-5">Nuestros Videojuegos</h1>
     <div class="row" id="games-list">
-      <!-- Aquí se renderizan las tarjetas de los juegos -->
+      {% for videojuego in videojuegos %}
+      <div class="col-md-4 mb-4">
+        <div class="card">
+          {% if videojuego.foto %}
+            <img src="{{ videojuego.foto.url }}" class="card-img-top" alt="{{ videojuego.nombre }}">
+          {% else %}
+            <img src="{% static 'img/default_game.png' %}" class="card-img-top" alt="Imagen por defecto">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ videojuego.nombre }}</h5>
+            <p class="card-text">{{ videojuego.descripcion|truncatechars:100 }}</p>
+            <p class="card-text"><strong>Precio: ${{ videojuego.precio }}</strong></p>
+            <p class="card-text">Stock: {{ videojuego.stock }}</p>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#gameModal" 
+                    data-id="{{ videojuego.id }}" 
+                    data-nombre="{{ videojuego.nombre }}" 
+                    data-descripcion="{{ videojuego.descripcion }}" 
+                    data-precio="{{ videojuego.precio }}"
+                    data-foto="{{ videojuego.foto.url }}">
+              Ver detalles
+            </button>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <p>No hay videojuegos disponibles en este momento.</p>
+      </div>
+      {% endfor %}
     </div>
   </div>
+
   <div class="modal fade" id="gameModal" tabindex="-1" role="dialog" aria-labelledby="gameModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
@@ -70,8 +98,7 @@
         <div class="modal-body">
           <img id="gameModalImage" src="" alt="" class="img-fluid mb-3">
           <p id="gameModalDescription"></p>
-          <p>Fecha de lanzamiento: <span id="gameModalReleaseDate"></span></p>
-          <p>Rating: <span id="gameModalRating"></span></p>
+          <p>Precio: $<span id="gameModalPrice"></span></p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -104,5 +131,31 @@
   <script src="{% static 'js/productos.js' %}"></script>
   <script src="{% static 'js/carro.js' %}"></script>
   <script src="{% static 'js/utils.js' %}"></script>
+  <script>
+    $(document).ready(function() {
+      $('.btn-primary').on('click', function() {
+        var id = $(this).data('id');
+        var nombre = $(this).data('nombre');
+        var descripcion = $(this).data('descripcion');
+        var precio = $(this).data('precio');
+        var foto = $(this).data('foto');
+        
+        $('#gameModalLabel').text(nombre);
+        $('#gameModalDescription').text(descripcion);
+        $('#gameModalImage').attr('src', foto);
+        $('#gameModalPrice').text(precio);
+        
+        $('#addToCartBtn').data('id', id);
+      });
+      
+      $('#addToCartBtn').on('click', function() {
+        var id = $(this).data('id');
+        // Aquí deberías implementar la lógica para agregar al carrito
+        console.log('Agregar al carrito el juego con ID:', id);
+        $('#gameModal').modal('hide');
+        $('#addToCartModal').modal('show');
+      });
+    });
+  </script>
 </body>
 </html>
