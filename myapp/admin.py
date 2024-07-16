@@ -1,11 +1,8 @@
 from django.contrib import admin
-from .models import Usuario, Categoria, Videojuego, Carrito, ItemCarrito, Orden, ItemOrden
+from .models import UsuarioVideojuego, Videojuego, CarritoItem, Pedido, DetallesPedido
 
-# Register your models here.
-admin.site.register(Usuario)
-admin.site.register(Categoria)
+admin.site.register(UsuarioVideojuego)
 admin.site.register(Videojuego)
-admin.site.register(Carrito)
-admin.site.register(ItemCarrito)
-admin.site.register(Orden)
-admin.site.register(ItemOrden)
+admin.site.register(CarritoItem)
+admin.site.register(Pedido)
+admin.site.register(DetallesPedido)

@@ -1,87 +1,74 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
+from django.utils.text import slugify
 
+class Videojuego(models.Model):
+    nombre = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True, blank=True)
+    descripcion = models.TextField()
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    stock = models.IntegerField(null=True, blank=True)
+    foto = models.ImageField(upload_to='videojuegos/', default='default_game.png')
 
-
-class Usuario(AbstractUser):
-    direccion = models.CharField(max_length=255)
-    telefono = models.CharField(max_length=20)
-    
-    groups = models.ManyToManyField(
-        'auth.Group',
-        related_name='custom_user_set',  # Aquí añades un related_name personalizado
-        blank=True,
-        help_text=('The groups this user belongs to. A user will get all permissions granted to each of their groups.'),
-        related_query_name='user',
-    )
-    
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        related_name='custom_user_set',  # Aquí añades un related_name personalizado
-        blank=True,
-        help_text=('Specific permissions for this user.'),
-        related_query_name='user',
-    )
-
-
-
-
-class Categoria(models.Model):
-    nombre = models.CharField(max_length=100)
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.nombre)
+            counter = 1
+            while Videojuego.objects.filter(slug=self.slug).exists():
+                self.slug = f"{slugify(self.nombre)}-{counter}"
+                counter += 1
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.nombre
 
-
-class Videojuego(models.Model):
-    titulo = models.CharField(max_length=200)
-    descripcion = models.TextField()
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
-    categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True)
-    stock = models.IntegerField()
-    imagen = models.ImageField(upload_to='videojuegos/')
+class UsuarioVideojuego(models.Model):
+    usuario = models.CharField(max_length=100)
+    correo = models.EmailField()
+    contraseña = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.titulo
-    
+        return self.usuario
 
-    
-class Carrito(models.Model):
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    fecha_creacion = models.DateTimeField(auto_now_add=True)
+class Pedido(models.Model):
+    nombre_completo = models.CharField(max_length=200)
+    telefono = models.CharField(max_length=15)
+    direccion = models.TextField()
+    EFECTIVO = 'EF'
+    DEBITO = 'DE'
+    CREDITO = 'CR'
+    TRANSFERENCIA = 'TR'
+    FORMA_PAGO_CHOICES = [
+        (EFECTIVO, 'Efectivo'),
+        (DEBITO, 'Débito'),
+        (CREDITO, 'Crédito'),
+        (TRANSFERENCIA, 'Transferencia'),
+    ]
+    forma_pago = models.CharField(
+        max_length=2,
+        choices=FORMA_PAGO_CHOICES,
+        default=EFECTIVO,
+    )
 
     def __str__(self):
-        return f"Carrito de {self.usuario.username}"
-
-
-class ItemCarrito(models.Model):
-    carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE)
+        return f"{self.nombre_completo} - {self.get_forma_pago_display()}"
+    
+class CarritoItem(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     videojuego = models.ForeignKey(Videojuego, on_delete=models.CASCADE)
-    cantidad = models.IntegerField()
+    cantidad = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        unique_together = ('usuario', 'videojuego')
+
+class DetallesPedido(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name='detalles')
+    videojuego_nombre = models.CharField(max_length=200)
+    cantidad = models.PositiveIntegerField()
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"{self.cantidad} x {self.videojuego.titulo}"
-    
+        return f"{self.videojuego_nombre} - {self.cantidad} unidades"
 
-class Orden(models.Model):
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    fecha = models.DateTimeField(auto_now_add=True)
-    total = models.DecimalField(max_digits=10, decimal_places=2)
-    direccion_envio = models.CharField(max_length=255)
-    telefono_contacto = models.CharField(max_length=20)
-    estado = models.CharField(max_length=50, choices=[('Pendiente', 'Pendiente'), ('Enviado', 'Enviado'), ('Entregado', 'Entregado')])
-
-    def __str__(self):
-        return f"Orden {self.id} - {self.usuario.username}"
-    
-
-class ItemOrden(models.Model):
-    orden = models.ForeignKey(Orden, on_delete=models.CASCADE)
-    videojuego = models.ForeignKey(Videojuego, on_delete=models.CASCADE)
-    cantidad = models.IntegerField()
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
-
-    def __str__(self):
-        return f"{self.cantidad} x {self.videojuego.titulo}"
-
-
+    def subtotal(self):
+        return self.cantidad * self.precio_unitario
