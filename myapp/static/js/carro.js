@@ -1,4 +1,14 @@
 $(document).ready(function() {
+  // Nuevo event listener para el ícono del carrito
+  $('#carro-link').on('click', function(e) {
+    e.preventDefault();
+    const loggedInUser = localStorage.getItem('loggedInUser');
+    if (!loggedInUser) {
+      window.location.href = loginUrl;
+    } else {
+      window.location.href = carroUrl;
+    }
+  });
     // Cargar items del carrito al iniciar
     loadCartItems();
   
@@ -32,6 +42,7 @@ $(document).ready(function() {
       if (!loggedInUser) {
         $('#cartItems').html('<tr><td colspan="5">Debes iniciar sesión para ver los productos en el carrito.</td></tr>');
         $('#cartTotal').text('$0.00');
+    
         return ;
       }
       

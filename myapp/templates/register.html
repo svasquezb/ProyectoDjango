@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
-  <link rel="stylesheet" href="{% static 'css/register.css' %}">
   <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -29,7 +28,7 @@
             <a class="nav-link" href="{% url 'productos' %}" id="juegos-link">Videojuegos</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'carro' %}" id="carro-link">
+            <a class="nav-link" href="{% url 'login' %}" id="carro-link">
               <i class='bx bx-cart'></i> Carro <span id="cartItemCount" class="badge badge-pill badge-primary">0</span>
             </a>
           </li>
@@ -83,7 +82,10 @@
       </div>
     {% endif %}
   </div>
-
+  <script>
+    var loginUrl = "{% url 'login' %}";
+    var carroUrl = "{% url 'carro' %}";
+  </script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
   <script src="{% static 'js/register.js' %}"></script>
