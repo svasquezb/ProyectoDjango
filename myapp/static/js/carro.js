@@ -1,12 +1,12 @@
 $(document).ready(function() {
-  // Nuevo event listener para el ícono del carrito
+  // Event listener para el ícono del carrito
   $('#carro-link').on('click', function(e) {
       e.preventDefault();
       const loggedInUser = localStorage.getItem('loggedInUser');
       if (!loggedInUser) {
-          window.location.href = loginUrl;
+          alert('Debes iniciar sesión para ver el carrito.');
       } else {
-          window.location.href = carroUrl;
+          window.location.href = '/carro/'; // Asegúrate de que esta URL sea correcta
       }
   });
 
@@ -33,7 +33,7 @@ $(document).ready(function() {
       if (cartItems.length === 0) {
           $('#checkoutMessage').text('No hay artículos en el carrito.').show();
       } else {
-          window.location.href = '/checkout/';
+          window.location.href = '/checkout/';  // Asegúrate de tener esta URL definida
       }
   });
 
