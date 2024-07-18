@@ -14,7 +14,7 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
-      <a class="navbar-brand" href="#">Mega Games</a>
+      <a class="navbar-brand" href="#">MegaGames</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -31,18 +31,21 @@
               <i class='bx bx-cart'></i> Carro <span id="cartItemCount" class="badge badge-pill badge-primary">0</span>
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'login' %}" id="login-link"><i class='bx bx-user'></i> Iniciar sesión</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'register' %}" id="registro-link"><i class='bx bx-user-plus'></i> Registro</a>
-          </li>
-          <li class="nav-item" id="user-info" style="display: none;">
-            <span class="nav-link">Bienvenido, <span id="username-display"></span></span>
-          </li>
-          <li class="nav-item" id="logout-link" style="display: none;">
-            <a class="nav-link" href="{% url 'index' %}" onclick="logout()"><i class='bx bx-log-out'></i> Cerrar sesión</a>
-          </li>
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <span class="nav-link">Bienvenido, {{ user.username }}</span>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}"><i class='bx bx-log-out'></i> Cerrar sesión</a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}" id="login-link"><i class='bx bx-user'></i> Iniciar sesión</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'register' %}" id="registro-link"><i class='bx bx-user-plus'></i> Registro</a>
+            </li>
+          {% endif %}
         </ul>
       </div>
     </div>
@@ -66,7 +69,6 @@
 
     </div>
   </div>
-
 
   <div class="modal fade" id="gameModal" tabindex="-1" role="dialog" aria-labelledby="gameModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -116,9 +118,9 @@
         <div class="col-md-4">
           <h5>Síguenos</h5>
           <ul class="list-unstyled">
-            <li><a href="#" class="text-white"><i ></i>Instagram</i></a></li>
-            <li><a href="#" class="text-white"><i ></i>Facebook</a></li>
-            <li><a href="#" class="text-white"><i ></i>Twitter</a></li>
+            <li><a href="#" class="text-white"><i></i>Instagram</i></a></li>
+            <li><a href="#" class="text-white"><i></i>Facebook</a></li>
+            <li><a href="#" class="text-white"><i></i>Twitter</a></li>
           </ul>
         </div>
         <div class="col-md-4">
@@ -134,14 +136,13 @@
     </div>
   </footer>
 
-  
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
   <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
- 
+
   <script src="{% static 'js/buscador.js' %}"></script>
   <script src="{% static 'js/carrusel.js' %}"></script>
   <script src="{% static 'js/carro.js' %}"></script>
-  
+
 </body>
 </html>

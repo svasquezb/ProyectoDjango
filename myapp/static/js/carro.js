@@ -32,7 +32,7 @@ $(document).ready(function() {
       if (!loggedInUser) {
         $('#cartItems').html('<tr><td colspan="5">Debes iniciar sesión para ver los productos en el carrito.</td></tr>');
         $('#cartTotal').text('$0.00');
-        return;
+        return ;
       }
       
         try {

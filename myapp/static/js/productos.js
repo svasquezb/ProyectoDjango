@@ -80,7 +80,7 @@ function addToCart(game) {
     },
     error: function(xhr) {
       console.error('Error al agregar al carrito:', xhr);
-      alert('Hubo un error al agregar el producto al carrito. Por favor, inténtalo de nuevo.');
+      alert('Debe iniciar sesion para agregar productos al carrito. Por favor, inicie sesion.');
     }
   });
 }

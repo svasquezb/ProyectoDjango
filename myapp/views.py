@@ -8,6 +8,7 @@ from .models import Videojuego, CarritoItem
 from .forms import LoginForm, RegisterForm
 from django.conf import settings
 
+
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)

@@ -18,7 +18,7 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
-      <a class="navbar-brand" href="#">Tienda de Videojuegos</a>
+      <a class="navbar-brand" href="#">MegaGames</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -35,18 +35,21 @@
               <i class='bx bx-cart'></i> Carro <span id="cartItemCount" class="badge badge-pill badge-primary">0</span>
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'login' %}" id="login-link"><i class='bx bx-user'></i> Iniciar sesión</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'register' %}" id="registro-link"><i class='bx bx-user-plus'></i> Registro</a>
-          </li>
-          <li class="nav-item" id="user-info" style="display: none;">
-            <span class="nav-link">Bienvenido, <span id="username-display"></span></span>
-          </li>
-          <li class="nav-item" id="logout-link" style="display: none;">
-            <a class="nav-link" href="{% url 'index' %}" onclick="logout()"><i class='bx bx-log-out'></i> Cerrar sesión</a>
-          </li>
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <span class="nav-link">Bienvenido, {{ user.username }}</span>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}"><i class='bx bx-log-out'></i> Cerrar sesión</a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}" id="login-link"><i class='bx bx-user'></i> Iniciar sesión</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'register' %}" id="registro-link"><i class='bx bx-user-plus'></i> Registro</a>
+            </li>
+          {% endif %}
         </ul>
       </div>
     </div>
