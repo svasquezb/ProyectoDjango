@@ -17,7 +17,7 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return JsonResponse({'success': True, 'message': f'Bienvenido {username}!'})
+                return JsonResponse({'success': True, 'message': f'Bienvenido {username}!', 'username': username})
             else:
                 return JsonResponse({'success': False, 'message': 'Credenciales inválidas.'})
         else:
@@ -54,13 +54,9 @@ def carro(request):
     total = sum(item.videojuego.precio * item.cantidad for item in items)
     return render(request, 'carro.html', {'items': items, 'total': total})
 
-
-
 def productos(request):
     videojuegos = Videojuego.objects.all()
     return render(request, 'productos.html', {'videojuegos': videojuegos})
-
-
 
 @login_required
 @require_POST
