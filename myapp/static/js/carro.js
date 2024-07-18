@@ -1,100 +1,128 @@
-// Obtener referencias a los elementos del DOM
-const cartItemsContainer = document.getElementById('cartItems');
-const cartTotalElement = document.getElementById('cartTotal');
-const cartItemCountElement = document.getElementById('cartItemCount');
-
-const apiKey = "d03f6e1112694da0bcc1dd1bd019343b";
-
-
-
-// Función para renderizar los elementos del carro
-function renderCartItems(cartItems) {
-  console.log('Renderizando elementos del carro:', cartItems);
-  cartItemsContainer.innerHTML = '';
-
-  cartItems.forEach((item, index) => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>
-        <img src="${item.image}" alt="${item.name}" width="50">
-        ${item.name}
-      </td>
-      <td>$${item.price}</td>
-      <td>
-        <input type="number" class="form-control quantity" value="${item.quantity}" min="1" data-index="${index}">
-      </td>
-      <td>$${item.subtotal.toFixed(2)}</td>
-      <td>
-        <button type="button" class="btn btn-danger btn-sm remove-item" data-index="${index}">X</button>
-      </td>
-    `;
-    cartItemsContainer.appendChild(row);
-  });
-
-  // Actualizar el contador de elementos en el carro
-  cartItemCountElement.textContent = cartItems.length;
-}
-
-// Función para calcular el total del carro
-function calculateCartTotal(cartItems) {
-  const total = cartItems.reduce((acc, item) => {
-    if (typeof item.subtotal === 'number') {
-      return acc + item.subtotal;
-    } else {
-      return acc;
+$(document).ready(function() {
+    // Cargar items del carrito al iniciar
+    loadCartItems();
+  
+    // Actualizar cantidad
+    $(document).on('change', '.quantity-input', function() {
+      const itemId = $(this).closest('.cart-item').data('id');
+      const newQuantity = $(this).val();
+      updateCartItem(itemId, newQuantity);
+    });
+  
+    // Eliminar item
+    $(document).on('click', '.remove-item', function(e) {
+        e.preventDefault();
+        console.log("Botón Eliminar clickeado");
+        const itemId = $(this).data('id');
+        console.log("ID del item a eliminar:", itemId);
+        if (!itemId) {
+          console.error("No se pudo obtener el ID del item");
+          return;
+        }
+        removeCartItem(itemId);
+      });
+    // Proceder al pago
+    $('#proceedToCheckout').on('click', function() {
+      window.location.href = '/checkout/';  // Asegúrate de tener esta URL definida
+    });
+  
+    function loadCartItems() {
+        try {
+          const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+          console.log("Cargando items del carrito:", cartItems);
+          let cartHTML = '';
+          let total = 0;
+      
+          cartItems.forEach(item => {
+            console.log("Procesando item:", item);
+            const precio = parseFloat(item.precio);
+            const cantidad = parseInt(item.cantidad);
+            const subtotal = precio * cantidad;
+      
+            if (isNaN(precio) || isNaN(cantidad) || isNaN(subtotal)) {
+              console.error('Datos inválidos para el item:', item);
+              return; // Salta este item si los datos no son válidos
+            }
+      
+            cartHTML += `
+              <tr class="cart-item" data-id="${item.id}">
+                <td>
+                  <img src="${item.imagen}" alt="${item.nombre}" style="width: 50px; height: 50px; object-fit: cover;">
+                  ${item.nombre}
+                </td>
+                <td>$${precio.toFixed(2)}</td>
+                <td>
+                  <input type="number" class="form-control quantity-input" value="${cantidad}" min="1">
+                </td>
+                <td>$${subtotal.toFixed(2)}</td>
+                <td>
+                  <button class="btn btn-danger btn-sm remove-item" data-id="${item.id}">Eliminar</button>
+                </td>
+              </tr>
+            `;
+            total += subtotal;
+          });
+      
+          $('#cartItems').html(cartHTML);
+          $('#cartTotal').text(`$${total.toFixed(2)}`);
+          updateCartItemCount();
+          
+          console.log("Carrito cargado exitosamente");
+        } catch (error) {
+          console.error('Error al cargar los items del carrito:', error);
+          $('#cartItems').html('<tr><td colspan="5">Error al cargar los items del carrito. Por favor, intenta de nuevo más tarde.</td></tr>');
+          $('#cartTotal').text('$0.00');
+        }
+      }
+  
+    function updateCartItem(itemId, quantity) {
+      let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+      const item = cartItems.find(item => item.id === itemId);
+      if (item) {
+        item.cantidad = parseInt(quantity);
+        item.subtotal = parseFloat(item.precio) * item.cantidad;
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        loadCartItems();
+      }
     }
-  }, 0);
-  cartTotalElement.textContent = `$${total.toFixed(2)}`;
-}
-
-function updateCartItemQuantity(index, quantity) {
-  console.log('Actualizando cantidad del elemento del carro:', index, quantity);
-  const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-
-  // Verificar si el precio es un número válido
-  const price = isNaN(cartItems[index].price) ? 0 : cartItems[index].price;
-
-  cartItems[index].quantity = quantity;
-  cartItems[index].subtotal = price * quantity;
-
-  localStorage.setItem('cartItems', JSON.stringify(cartItems));
-  console.log('Datos del carro actualizados en el almacenamiento local:', cartItems);
-  renderCartItems(cartItems);
-  calculateCartTotal(cartItems);
-}
-
-
-function removeCartItem(index) {
-  console.log('Eliminando elemento del carro:', index);
-  const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-  cartItems.splice(index, 1);
-  localStorage.setItem('cartItems', JSON.stringify(cartItems));
-  console.log('Datos del carro actualizados en el almacenamiento local:', cartItems);
-  renderCartItems(cartItems);
-  calculateCartTotal(cartItems);
-}
-
-function updateCartItemCount() {
-  const cartItemCountElement = document.getElementById('cartItemCount');
-  cartItemCountElement.textContent = cartItems.length;
-}
-
-cartItemsContainer.addEventListener('change', (event) => {
-  if (event.target.classList.contains('quantity')) {
-    const index = parseInt(event.target.dataset.index);
-    const quantity = parseInt(event.target.value);
-    updateCartItemQuantity(index, quantity);
-  }
-});
-
-cartItemsContainer.addEventListener('click', (event) => {
-  if (event.target.classList.contains('remove-item')) {
-    const index = parseInt(event.target.dataset.index);
-    removeCartItem(index);
-  }
-});
-
-// Obtener los elementos del carro del almacenamiento local al cargar la página
-const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-renderCartItems(cartItems);
-calculateCartTotal(cartItems);
+  
+    function removeCartItem(itemId) {
+        console.log("Función removeCartItem llamada con ID:", itemId);
+        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        console.log("Items en el carrito antes de eliminar:", cartItems);
+      
+        if (!itemId) {
+          console.error("El itemId es inválido");
+          return;
+        }
+      
+        cartItems = cartItems.filter(item => item.id !== itemId);
+      
+        console.log("Items en el carrito después de eliminar:", cartItems);
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        loadCartItems();
+        updateCartItemCount();
+      }
+  
+    function updateCartItemCount() {
+      const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+      const itemCount = cartItems.reduce((total, item) => total + parseInt(item.cantidad), 0);
+      $('#cartItemCount').text(itemCount);
+      console.log("Contador del carrito actualizado:", itemCount);
+    }
+  
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  });

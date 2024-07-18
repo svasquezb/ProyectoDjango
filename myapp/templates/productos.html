@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
   <title>Videojuegos</title>
+  
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -58,7 +59,7 @@
       <div class="col-md-4 mb-4">
         <div class="card">
           {% if videojuego.foto %}
-            <img src="{% static 'img/'|add:videojuego.foto.name %}" class="card-img-top" alt="{{ videojuego.nombre }}">
+            <img src="{{ videojuego.foto.url }}" class="card-img-top" alt="{{ videojuego.nombre }}">
           {% else %}
             <img src="{% static 'img/default_game.png' %}" class="card-img-top" alt="Imagen por defecto">
           {% endif %}
@@ -67,12 +68,13 @@
             <p class="card-text">{{ videojuego.descripcion|truncatechars:100 }}</p>
             <p class="card-text"><strong>Precio: ${{ videojuego.precio }}</strong></p>
             <p class="card-text">Stock: {{ videojuego.stock }}</p>
-            <button class="btn btn-primary" data-toggle="modal" data-target="#gameModal" 
+            <button class="btn btn-primary ver-detalles" data-toggle="modal" data-target="#gameModal" 
                     data-id="{{ videojuego.id }}" 
                     data-nombre="{{ videojuego.nombre }}" 
                     data-descripcion="{{ videojuego.descripcion }}" 
                     data-precio="{{ videojuego.precio }}"
-                    data-foto="{% static 'img/'|add:videojuego.foto.name %}">
+                    data-foto="{% if videojuego.foto %}{{ videojuego.foto.url }}{% else %}{% static 'img/default_game.png' %}{% endif %}"
+                    data-stock="{{ videojuego.stock }}">
               Ver detalles
             </button>
           </div>
@@ -99,6 +101,7 @@
           <img id="gameModalImage" src="" alt="" class="img-fluid mb-3">
           <p id="gameModalDescription"></p>
           <p>Precio: $<span id="gameModalPrice"></span></p>
+          <p>Stock: <span id="gameModalStock"></span></p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -130,32 +133,5 @@
 
   <script src="{% static 'js/productos.js' %}"></script>
   <script src="{% static 'js/carro.js' %}"></script>
- 
-  <script>
-    $(document).ready(function() {
-      $('.btn-primary').on('click', function() {
-        var id = $(this).data('id');
-        var nombre = $(this).data('nombre');
-        var descripcion = $(this).data('descripcion');
-        var precio = $(this).data('precio');
-        var foto = $(this).data('foto');
-        
-        $('#gameModalLabel').text(nombre);
-        $('#gameModalDescription').text(descripcion);
-        $('#gameModalImage').attr('src', foto);
-        $('#gameModalPrice').text(precio);
-        
-        $('#addToCartBtn').data('id', id);
-      });
-      
-      $('#addToCartBtn').on('click', function() {
-        var id = $(this).data('id');
-        // Aquí deberías implementar la lógica para agregar al carrito
-        console.log('Agregar al carrito el juego con ID:', id);
-        $('#gameModal').modal('hide');
-        $('#addToCartModal').modal('show');
-      });
-    });
-  </script>
 </body>
 </html>

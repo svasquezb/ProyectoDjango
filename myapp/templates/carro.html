@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -64,6 +63,7 @@
             </tr>
           </thead>
           <tbody id="cartItems">
+            <!-- Los items del carrito se cargarán aquí dinámicamente -->
           </tbody>
         </table>
       </div>
@@ -72,7 +72,7 @@
           <div class="card-body">
             <h5 class="card-title">Resumen de la Compra</h5>
             <p class="card-text">Total: <span id="cartTotal">$0.00</span></p>
-            <button type="button" class="btn btn-primary btn-block">Proceder al Pago</button>
+            <button type="button" class="btn btn-primary btn-block" id="proceedToCheckout">Proceder al Pago</button>
           </div>
         </div>
       </div>
@@ -80,9 +80,8 @@
   </div>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
   <script src="{% static 'js/carro.js' %}"></script>
-  <script src="{% static 'js/productos.js' %}"></script>
-
 </body>
 </html>
