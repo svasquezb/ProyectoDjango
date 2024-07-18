@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resumen de Compra</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand" href="#">MegaGames</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'index' %}">Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'productos' %}">Videojuegos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'carro' %}">
+              <i class='bx bx-cart'></i> Carro
+            </a>
+          </li>
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <span class="nav-link">Bienvenido, {{ user.username }}</span>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}"><i class='bx bx-log-out'></i> Cerrar sesión</a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}"><i class='bx bx-user'></i> Iniciar sesión</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'register' %}"><i class='bx bx-user-plus'></i> Registro</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container my-5">
+    <h1 class="text-center mb-4">Resumen de Compra</h1>
+    <div class="row">
+      <div class="col-md-8">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Precio</th>
+              <th>Cantidad</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items %}
+            <tr>
+              <td>{{ item.videojuego.nombre }}</td>
+              <td>${{ item.videojuego.precio }}</td>
+              <td>{{ item.cantidad }}</td>
+              <td>${{ item.videojuego.precio|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Resumen del Pedido</h5>
+            <p class="card-text">Total: <span>${{ total|floatformat:2 }}</span></p>
+            <h5>Datos del Usuario</h5>
+            <p>Nombre: {{ user.username }}</p>
+            <p>Email: {{ user.email }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

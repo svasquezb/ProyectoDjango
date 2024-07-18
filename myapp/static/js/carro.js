@@ -33,7 +33,7 @@ $(document).ready(function() {
       });
     // Proceder al pago
     $('#proceedToCheckout').on('click', function() {
-      window.location.href = '/checkout/';  // Asegúrate de tener esta URL definida
+      window.location.href = '/checkout/';
     });
   
     function loadCartItems() {
@@ -41,7 +41,7 @@ $(document).ready(function() {
     
       if (!loggedInUser) {
         $('#cartItems').html('<tr><td colspan="5">Debes iniciar sesión para ver los productos en el carrito.</td></tr>');
-        $('#cartTotal').text('$0.00');
+        $('#cartTotal').text('$0');
     
         return ;
       }
@@ -90,7 +90,7 @@ $(document).ready(function() {
         } catch (error) {
           console.error('Error al cargar los items del carrito:', error);
           $('#cartItems').html('<tr><td colspan="5">Error al cargar los items del carrito. Por favor, intenta de nuevo más tarde.</td></tr>');
-          $('#cartTotal').text('$0.00');
+          $('#cartTotal').text('$0');
         }
       }
   

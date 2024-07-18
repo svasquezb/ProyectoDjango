@@ -101,3 +101,14 @@ def api_videojuegos(request):
         if juego['foto']:
             juego['foto'] = settings.STATIC_URL + 'img/' + juego['foto'].split('/')[-1]
     return JsonResponse(list(videojuegos), safe=False)
+
+
+@login_required
+def resumen_compra(request):
+    items = CarritoItem.objects.filter(usuario=request.user)
+    total = sum(item.videojuego.precio * item.cantidad for item in items)
+    return render(request, 'resumen_compra.html', {
+        'items': items,
+        'total': total,
+        'user': request.user
+    })
